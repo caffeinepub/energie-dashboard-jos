@@ -1,16 +1,54 @@
-# Specification
+# Energie Dashboard Jos
 
-## Summary
-**Goal:** Fix broken gas and electricity cost calculations in the energy dashboard, and add a new usage analysis view with consumption breakdowns.
+## Current State
+Een energie dashboard applicatie met Internet Identity authenticatie. Gebruikers kunnen meterstanden invoeren, kosten berekenen en grafieken/analyses bekijken. De applicatie heeft problemen met layout, kleurenschema en inconsistenties in de data flow.
 
-**Planned changes:**
-- Fix monthly gas cost calculation: consumption delta (m³) × gas price (€/m³) per year
-- Fix monthly electricity cost calculation: consumption delta (kWh) × electricity price (€/kWh) per year
-- Apply per-month price overrides when present, otherwise use yearly defaults
-- Ensure SummaryOverview KPI cards (gas costs, electricity costs, total energy costs, yearly prognosis) display correct values
-- Fix CostChart to display correct monthly cost lines for gas, electricity, and other costs
-- Add a new "Analyse" tab/section accessible from the main navigation
-- Display monthly and yearly totals for electricity high tariff (kWh), electricity low tariff (kWh), combined electricity total (kWh), and gas (m³) in the analysis view
-- Filter analysis data by the currently selected year
+## Requested Changes (Diff)
 
-**User-visible outcome:** Cost KPI cards and charts show correct calculated values, and users can navigate to a new "Analyse" section to view detailed energy consumption breakdowns by tariff type and gas usage, both per month and as yearly totals.
+### Add
+- Volledige heropbouw van de applicatie van de grond af aan
+- Locatie-instelling voor weerdata (stad/coördinaten)
+- HTTP outcalls naar Open-Meteo API voor live weerdata (temperatuur, luchtvochtigheid, neerslag per maand)
+- Weerdata correlatie-analyses: verbruik vs. temperatuur grafieken
+- Heatmap: verbruik per dag gerelateerd aan temperatuur
+- Seizoensanalyse: zomer vs. winter verbruik
+- Kosten-per-graaddag analyse (heating degree days)
+- Professionele sidebar navigatie layout
+- Dashboard overzichts-pagina met KPI cards
+- Jaar-selector persistent door de app
+- "Instellingen" pagina voor profiel, locatie, prijzen en belastingen
+
+### Modify
+- Backend: voeg locatie opslag toe per gebruiker
+- Backend: voeg weather data caching toe (maandgemiddelden per locatie)
+- Backend: HTTP outcalls naar Open-Meteo voor historische weerdata
+- Frontend: volledig herontwerpte professionele UI
+- Alle bestaande data types behouden (Entry, MeterReadings, YearlyPrices, YearlyTax, etc.)
+- Verbruiksberekening via meterstand-deltas blijft behouden
+- Elektriciteit normaal/dal splitsing blijft behouden
+
+### Remove
+- Oude component-gebaseerde frontend (volledig vervangen)
+- Gebroken styling en inconsistenties
+
+## Implementation Plan
+
+### Backend (Motoko)
+1. Behoud alle bestaande types: Entry, MeterReadings, YearlyPrices, YearlyTax, UserProfile, YearlyStartingReadings, GlobalMeterReadings
+2. Voeg `UserLocation` type toe: { city: Text; latitude: Float; longitude: Float }
+3. Voeg `WeatherData` type toe: { month: Nat8; year: Nat16; avgTempC: Float; humidity: Float; precipitation: Float }
+4. Voeg `userLocations` map toe per Principal
+5. Voeg `cachedWeatherData` map toe per Principal per jaar-maand sleutel
+6. HTTP outcall naar Open-Meteo API: `https://api.open-meteo.com/v1/forecast` en historical endpoint
+7. Functies: setUserLocation, getUserLocation, fetchWeatherForMonth, getWeatherData, getCachedWeatherData
+8. Behoud alle bestaande CRUD functies
+
+### Frontend
+1. Layout: sidebar navigatie (links) + main content area
+2. Pagina's: Dashboard, Data Invoer, Grafieken, Analyse, Vergelijking, Instellingen
+3. Dashboard: KPI cards (huidig maandverbruik, kosten, prognose), mini grafieken, actueel weer widget
+4. Data Invoer: meterstanden per maand, beginstanden per jaar, overige kosten, prijs aanpassingen per maand
+5. Grafieken: verbruik bar chart, kostengrafiek, verbruik vs. temperatuur scatter plot, cumulatief
+6. Analyse: uitgebreide statistieken, seizoensanalyse, correlatie verbruik/temperatuur
+7. Vergelijking: jaar-op-jaar vergelijking met weerdata context
+8. Instellingen: profielbeheer, locatie instelling, jaarlijkse prijzen & belastingen
