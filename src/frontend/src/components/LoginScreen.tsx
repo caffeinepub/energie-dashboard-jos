@@ -50,21 +50,13 @@ export default function LoginScreen() {
             boxShadow: "0 24px 64px rgba(0,0,0,0.5)",
           }}
         >
-          {/* Logo */}
+          {/* Header */}
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.15, duration: 0.5 }}
             className="flex flex-col items-center mb-8"
           >
-            <div className="mb-4 relative">
-              <img
-                src="/assets/generated/energy-logo.dim_256x256.png"
-                alt="Energie Dashboard"
-                className="w-20 h-20 rounded-2xl"
-                style={{ boxShadow: "0 8px 32px oklch(0.75 0.18 55 / 0.3)" }}
-              />
-            </div>
             <h1
               className="text-2xl font-bold text-foreground tracking-tight"
               style={{ fontFamily: "Outfit, system-ui, sans-serif" }}

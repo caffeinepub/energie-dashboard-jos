@@ -179,7 +179,7 @@ export default function GrafiekenPage({ year }: Props) {
     });
   }, [monthlyData]);
 
-  // Pie data
+  // Pie data — pie slices can only be positive; negative otherCosts shown separately as a note
   const pieData = useMemo(() => {
     const gasTotal = monthlyData.reduce((s, d) => s + (d.gasCost ?? 0), 0);
     const normalTotal = monthlyData.reduce(
@@ -188,7 +188,8 @@ export default function GrafiekenPage({ year }: Props) {
     );
     const dalTotal = monthlyData.reduce((s, d) => s + (d.elecDalCost ?? 0), 0);
     const otherTotal = monthlyData.reduce((s, d) => s + (d.otherCosts ?? 0), 0);
-    return [
+
+    const slices = [
       {
         name: "Gas",
         value: Math.round(gasTotal * 100) / 100,
@@ -204,12 +205,18 @@ export default function GrafiekenPage({ year }: Props) {
         value: Math.round(dalTotal * 100) / 100,
         color: COLORS.elecDal,
       },
-      {
+    ].filter((d) => d.value > 0);
+
+    // Only include "Overige" as a pie slice when it's positive
+    if (otherTotal > 0) {
+      slices.push({
         name: "Overige",
         value: Math.round(otherTotal * 100) / 100,
         color: COLORS.other,
-      },
-    ].filter((d) => d.value > 0);
+      });
+    }
+
+    return { slices, otherTotal: Math.round(otherTotal * 100) / 100 };
   }, [monthlyData]);
 
   // Scatter data: gas vs temperature
@@ -396,12 +403,12 @@ export default function GrafiekenPage({ year }: Props) {
             <Card className="bg-card border-border/50">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Gestapelde maandelijkse kosten (€)
+                  Gestapelde maandelijkse kosten (€) — Overige kosten als lijn
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={320}>
-                  <BarChart
+                  <ComposedChart
                     data={monthlyData}
                     margin={{ top: 5, right: 16, left: -8, bottom: 5 }}
                   >
@@ -442,16 +449,20 @@ export default function GrafiekenPage({ year }: Props) {
                       stackId="a"
                       fill={COLORS.elecDal}
                       unit="€"
-                    />
-                    <Bar
-                      dataKey="otherCosts"
-                      name="Overige"
-                      stackId="a"
-                      fill={COLORS.other}
-                      unit="€"
                       radius={[3, 3, 0, 0]}
                     />
-                  </BarChart>
+                    {/* otherCosts rendered as a line so negative values display correctly below zero */}
+                    <Line
+                      type="monotone"
+                      dataKey="otherCosts"
+                      name="Overige"
+                      stroke={COLORS.other}
+                      strokeWidth={2}
+                      dot={{ r: 4, fill: COLORS.other, stroke: COLORS.other }}
+                      unit="€"
+                      connectNulls
+                    />
+                  </ComposedChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
@@ -681,7 +692,7 @@ export default function GrafiekenPage({ year }: Props) {
                 <ResponsiveContainer width="100%" height={280}>
                   <PieChart>
                     <Pie
-                      data={pieData}
+                      data={pieData.slices}
                       cx="50%"
                       cy="50%"
                       outerRadius={110}
@@ -693,7 +704,7 @@ export default function GrafiekenPage({ year }: Props) {
                       }
                       labelLine={{ stroke: "oklch(0.6 0.02 240)" }}
                     >
-                      {pieData.map((entry) => (
+                      {pieData.slices.map((entry) => (
                         <Cell key={entry.name} fill={entry.color} />
                       ))}
                     </Pie>
@@ -706,7 +717,7 @@ export default function GrafiekenPage({ year }: Props) {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="space-y-3 min-w-52">
-                  {pieData.map((d) => (
+                  {pieData.slices.map((d) => (
                     <div
                       key={d.name}
                       className="flex items-center justify-between gap-4"
@@ -725,6 +736,42 @@ export default function GrafiekenPage({ year }: Props) {
                       </span>
                     </div>
                   ))}
+                  {/* Show negative otherCosts as a separate note below pie legend */}
+                  {pieData.otherTotal !== 0 && (
+                    <div className="mt-2 pt-2 border-t border-border/30">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ background: COLORS.other }}
+                          />
+                          <span className="text-sm text-muted-foreground">
+                            Overige kosten
+                          </span>
+                        </div>
+                        <span
+                          className={`font-mono font-bold text-sm ${
+                            pieData.otherTotal < 0
+                              ? "text-green-400"
+                              : "text-foreground"
+                          }`}
+                        >
+                          {pieData.otherTotal < 0 ? "−" : "+"}€{" "}
+                          {Math.abs(pieData.otherTotal).toFixed(2)}
+                          {pieData.otherTotal < 0 && (
+                            <span className="ml-1 text-xs font-normal text-green-400">
+                              (korting)
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                      {pieData.otherTotal < 0 && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          * Niet in taart — korting wordt van totaal afgetrokken
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

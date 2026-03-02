@@ -19,11 +19,6 @@ function LoadingScreen() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <img
-          src="/assets/generated/energy-logo.dim_256x256.png"
-          alt="Energie Dashboard"
-          className="w-16 h-16 rounded-2xl opacity-80 animate-pulse"
-        />
         <div className="flex items-center gap-2 text-muted-foreground text-sm">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span>Laden...</span>

@@ -114,11 +114,6 @@ export default function Sidebar({
     <div className="flex flex-col h-full">
       {/* Logo & header */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-sidebar-border">
-        <img
-          src="/assets/generated/energy-logo.dim_256x256.png"
-          alt="Logo"
-          className="w-8 h-8 rounded-lg flex-shrink-0"
-        />
         {!collapsed && (
           <div className="overflow-hidden">
             <p className="text-sm font-bold text-sidebar-foreground truncate leading-tight">

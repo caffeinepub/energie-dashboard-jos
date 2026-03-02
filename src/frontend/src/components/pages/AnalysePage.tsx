@@ -305,53 +305,81 @@ export default function AnalysePage({ year }: Props) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {[
-                  {
-                    label: "Gas",
-                    cost: stats.totalGasCost,
-                    color: "bg-gas",
-                    textColor: "text-gas",
-                  },
-                  {
-                    label: "Elec. normaal",
-                    cost: stats.totalElecNormalCost,
-                    color: "bg-elec",
-                    textColor: "text-elec",
-                  },
-                  {
-                    label: "Elec. dal",
-                    cost: stats.totalElecDalCost,
-                    color: "bg-elec-dal",
-                    textColor: "text-elec-dal",
-                  },
-                  {
-                    label: "Overige",
-                    cost: stats.totalOther,
-                    color: "bg-overige",
-                    textColor: "text-overige",
-                  },
-                ].map((item) => {
-                  const pct =
-                    stats.totalCost > 0
-                      ? (item.cost / stats.totalCost) * 100
-                      : 0;
+                {(() => {
+                  // Use the sum of positive energy costs as denominator so percentages
+                  // always add up to 100% regardless of the sign of otherCosts.
+                  const baseCost =
+                    stats.totalGasCost +
+                    stats.totalElecNormalCost +
+                    stats.totalElecDalCost;
+                  const categories = [
+                    {
+                      label: "Gas",
+                      cost: stats.totalGasCost,
+                      color: "bg-gas",
+                      textColor: "text-gas",
+                    },
+                    {
+                      label: "Elec. normaal",
+                      cost: stats.totalElecNormalCost,
+                      color: "bg-elec",
+                      textColor: "text-elec",
+                    },
+                    {
+                      label: "Elec. dal",
+                      cost: stats.totalElecDalCost,
+                      color: "bg-elec-dal",
+                      textColor: "text-elec-dal",
+                    },
+                  ];
                   return (
-                    <div key={item.label}>
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className={item.textColor}>{item.label}</span>
-                        <span className="font-mono font-bold text-foreground">
-                          {formatCurrency(item.cost)} ({pct.toFixed(1)}%)
-                        </span>
-                      </div>
-                      <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full ${item.color} rounded-full`}
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
-                    </div>
+                    <>
+                      {categories.map((item) => {
+                        const pct =
+                          baseCost > 0 ? (item.cost / baseCost) * 100 : 0;
+                        return (
+                          <div key={item.label}>
+                            <div className="flex justify-between text-xs mb-1">
+                              <span className={item.textColor}>
+                                {item.label}
+                              </span>
+                              <span className="font-mono font-bold text-foreground">
+                                {formatCurrency(item.cost)} ({pct.toFixed(1)}%)
+                              </span>
+                            </div>
+                            <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full ${item.color} rounded-full`}
+                                style={{ width: `${Math.min(pct, 100)}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {/* Overige kosten — shown separately with sign-aware display */}
+                      {stats.totalOther !== 0 && (
+                        <div className="pt-1 border-t border-border/20">
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-overige">
+                              Overige kosten{" "}
+                              {stats.totalOther < 0 ? "(korting)" : "(extra)"}
+                            </span>
+                            <span
+                              className={`font-mono font-bold ${
+                                stats.totalOther < 0
+                                  ? "text-green-400"
+                                  : "text-destructive"
+                              }`}
+                            >
+                              {stats.totalOther > 0 ? "+" : ""}
+                              {formatCurrency(stats.totalOther)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   );
-                })}
+                })()}
                 <div className="pt-2 border-t border-border/30 text-xs text-muted-foreground">
                   <p>
                     Energiebelasting gas:{" "}
@@ -562,6 +590,9 @@ export default function AnalysePage({ year }: Props) {
                     <TableHead className="text-xs h-8 text-right whitespace-nowrap text-elec-dal">
                       Dal €
                     </TableHead>
+                    <TableHead className="text-xs h-8 text-right whitespace-nowrap text-overige">
+                      Overige €
+                    </TableHead>
                     <TableHead className="text-xs h-8 text-right whitespace-nowrap">
                       Totaal €
                     </TableHead>
@@ -606,6 +637,20 @@ export default function AnalysePage({ year }: Props) {
                         </TableCell>
                         <TableCell className="text-xs py-1.5 text-right font-mono">
                           {formatCurrency(row.elecDalCost)}
+                        </TableCell>
+                        <TableCell
+                          className={`text-xs py-1.5 text-right font-mono ${
+                            row.otherCosts < 0
+                              ? "text-green-400"
+                              : row.otherCosts > 0
+                                ? "text-destructive"
+                                : "text-muted-foreground"
+                          }`}
+                        >
+                          {row.otherCosts !== 0
+                            ? (row.otherCosts > 0 ? "+" : "") +
+                              formatCurrency(row.otherCosts)
+                            : "—"}
                         </TableCell>
                         <TableCell className="text-xs py-1.5 text-right font-mono font-bold text-foreground">
                           {formatCurrency(row.total)}
@@ -655,6 +700,20 @@ export default function AnalysePage({ year }: Props) {
                       </TableCell>
                       <TableCell className="text-xs py-1.5 text-right font-mono">
                         {formatCurrency(stats.totalElecDalCost)}
+                      </TableCell>
+                      <TableCell
+                        className={`text-xs py-1.5 text-right font-mono ${
+                          stats.totalOther < 0
+                            ? "text-green-400"
+                            : stats.totalOther > 0
+                              ? "text-destructive"
+                              : "text-muted-foreground"
+                        }`}
+                      >
+                        {stats.totalOther !== 0
+                          ? (stats.totalOther > 0 ? "+" : "") +
+                            formatCurrency(stats.totalOther)
+                          : "—"}
                       </TableCell>
                       <TableCell className="text-xs py-1.5 text-right font-mono font-bold text-foreground">
                         {formatCurrency(stats.totalCost)}
