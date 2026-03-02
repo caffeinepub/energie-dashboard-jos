@@ -1,0 +1,61 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Fix cost calculations and add usage analysis view",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Fix gas and electricity cost calculations to correctly compute monthly costs from meter reading deltas multiplied by applicable per-unit prices, ensuring all SummaryOverview KPI cards display accurate values",
+      "acceptanceCriteria": [
+        "Monthly gas cost = gas consumption delta (m³) × gas price (€/m³) for that year",
+        "Monthly electricity cost = electricity consumption delta (kWh) × electricity price (€/kWh) for that year",
+        "Per-month price overrides are applied when present, otherwise yearly defaults are used",
+        "SummaryOverview correctly shows yearly totals for gas, electricity, and combined costs",
+        "Yearly prognosis extrapolates from months with data correctly",
+        "CostChart displays correct monthly cost lines for gas, electricity, and other costs"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/CostChart.tsx",
+          "operation": "modify",
+          "description": "Fix the cost calculation logic to correctly multiply consumption deltas by the applicable per-unit prices (gas €/m³, electricity €/kWh). Ensure per-month price overrides stored in Entry data are applied when present, falling back to yearly defaults from getYearlyPrices. Verify that monthly gas cost uses gas consumption × gas price and monthly electricity cost uses total electricity consumption (high + low tariff) × electricity price."
+        },
+        {
+          "path": "frontend/src/components/SummaryOverview.tsx",
+          "operation": "modify",
+          "description": "Update the KPI card rendering to use the corrected cost values returned by the backend calculateCosts method. Ensure gas costs, electricity costs, total energy costs, and yearly prognosis all display the accurate computed values. Verify that the prognosis calculation properly extrapolates from the available months of data."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Review and update the useCalculateCosts hook to ensure it correctly calls calculateCosts with the proper yearly default prices and year parameter. Verify that the returned Costs structure (gasCostTotal, electricityCostTotal, totalOtherCosts, yearlyPrognosis) is properly typed and cached by React Query."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Add a usage analysis view showing total energy consumption broken down by electricity high tariff, electricity low tariff, combined electricity total, and gas, with monthly breakdowns and yearly totals for each category",
+      "acceptanceCriteria": [
+        "A new 'Analyse' tab or dedicated section is accessible from the main navigation",
+        "Electricity high tariff consumption is displayed per month and as a yearly total",
+        "Electricity low tariff consumption is displayed per month and as a yearly total",
+        "Combined electricity total (high + low) is displayed per month and as a yearly total",
+        "Gas consumption is displayed per month and as a yearly total",
+        "Data is filtered by the currently selected year",
+        "Values are shown with correct units: kWh for electricity, m³ for gas"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/UsageAnalysisView.tsx",
+          "operation": "create",
+          "description": "Create a new usage analysis view component that displays energy consumption breakdowns for the selected year. Fetch all entries for the year and calculate monthly consumption deltas using calculateMonthlyConsumption. Display a table or chart showing per-month values for: electricity high tariff (kWh), electricity low tariff (kWh), combined electricity total (kWh), and gas (m³). Include row/column totals for each category. Use semantic electricity (teal) and gas (amber) theme colors from the design system. Implement loading states and empty-state messaging."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a new 'Analyse' tab to the main navigation tabs array (alongside 'Grafieken', 'Gegevens invoeren', 'Vergelijken'). Wire the tab into the selectedTab state and render the UsageAnalysisView component when the 'Analyse' tab is active. Ensure the year selector state is passed down to UsageAnalysisView so it respects the currently selected year."
+        }
+      ]
+    }
+  ]
+}

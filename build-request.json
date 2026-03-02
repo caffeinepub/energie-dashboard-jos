@@ -1,0 +1,66 @@
+{
+  "kind": "build_request",
+  "title": "Fix cost calculations and add usage analysis view",
+  "projectName": "Energie Dashboard Jos",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Fix gas and electricity cost calculations so that monthly costs are correctly computed from meter reading deltas multiplied by the applicable per-unit price (gas €/m³, electricity €/kWh) for the selected year. Ensure SummaryOverview KPI cards (gas costs, electricity costs, total energy costs, yearly prognosis) all display correct values.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-10"
+        ],
+        "quotes": [
+          "De gas en electriciteits kosten worden niet meer berekend. Repareer dit."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Monthly gas cost = gas consumption delta (m³) × gas price (€/m³) for that year",
+        "Monthly electricity cost = electricity consumption delta (kWh) × electricity price (€/kWh) for that year",
+        "Per-month price overrides are applied when present, otherwise yearly defaults are used",
+        "SummaryOverview correctly shows yearly totals for gas, electricity, and combined costs",
+        "Yearly prognosis extrapolates from months with data correctly",
+        "CostChart displays correct monthly cost lines for gas, electricity, and other costs"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Add a usage analysis view (new tab or section) that shows total energy consumption broken down by: electricity high tariff (kWh), electricity low tariff (kWh), electricity combined total (kWh), and gas (m³). Display both monthly breakdowns and yearly totals for each category.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-10"
+        ],
+        "quotes": [
+          "Ook wil ik een analyse kunnen zien van het totale gebruik (electra (hoog en laag) en gas, uitgesplitst en totalen hiervan)."
+        ]
+      },
+      "acceptanceCriteria": [
+        "A new 'Analyse' tab or dedicated section is accessible from the main navigation",
+        "Electricity high tariff consumption is displayed per month and as a yearly total",
+        "Electricity low tariff consumption is displayed per month and as a yearly total",
+        "Combined electricity total (high + low) is displayed per month and as a yearly total",
+        "Gas consumption is displayed per month and as a yearly total",
+        "Data is filtered by the currently selected year",
+        "Values are shown with correct units: kWh for electricity, m³ for gas"
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not change immutable frontend paths (hooks/useInternetIdentity.ts, hooks/useActor.ts, main.tsx, components/ui)",
+    "All Motoko logic must remain in the single backend/main.mo actor",
+    "Preserve existing data schema and user data — only generate migration.mo if the data model must change"
+  ],
+  "nonGoals": [
+    "Redesigning the existing visual theme or layout beyond adding the new analysis section",
+    "Adding new authentication methods",
+    "Real-time data updates or WebSocket integration",
+    "Exporting data to CSV or external formats"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

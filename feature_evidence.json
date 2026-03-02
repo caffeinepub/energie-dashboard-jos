@@ -1,0 +1,46 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-fix-gas-and-electricity-cost-calculations-so-that-monthly-costs-are-correctly-computed-from-meter-reading-deltas-multiplied-by-the-applicable-per-unit-price-gas-m-electricity-kwh-for-the-selected-year-ensure-summaryoverview-kpi-cards-gas-costs-electricity-costs-total-energy-costs-yearly-prognosis-all-display-correct-values",
+      "featureTitle": "Fix gas and electricity cost calculations so that monthly costs are correctly computed from meter reading deltas multiplied by the applicable per-unit price (gas €/m³, electricity €/kWh) for the selected year. Ensure SummaryOverview KPI cards (gas costs, electricity costs, total energy costs, yearly prognosis) all display correct values.",
+      "files": [
+        "frontend/src/components/CostChart.tsx",
+        "frontend/src/components/SummaryOverview.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-usage-analysis-view-new-tab-or-section-that-shows-total-energy-consumption-broken-down-by-electricity-high-tariff-kwh-electricity-low-tariff-kwh-electricity-combined-total-kwh-and-gas-m-display-both-monthly-breakdowns-and-yearly-totals-for-each-category",
+      "featureTitle": "Add a usage analysis view (new tab or section) that shows total energy consumption broken down by: electricity high tariff (kWh), electricity low tariff (kWh), electricity combined total (kWh), and gas (m³). Display both monthly breakdowns and yearly totals for each category.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/UsageAnalysisView.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-03-02T17:32:21.344Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 2,
+    "implemented": 2,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Fix gas and electricity cost calculations so that monthly costs are correctly computed from meter reading deltas multiplied by the applicable per-unit price (gas €/m³, electricity €/kWh) for the selected year. Ensure SummaryOverview KPI cards (gas costs, electricity costs, total energy costs, yearly prognosis) all display correct values.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/CostChart.tsx",
+          "frontend/src/components/SummaryOverview.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/CostChart.tsx",
+          "frontend/src/components/SummaryOverview.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Add a usage analysis view (new tab or section) that shows total energy consumption broken down by: electricity high tariff (kWh), electricity low tariff (kWh), electricity combined total (kWh), and gas (m³). Display both monthly breakdowns and yearly totals for each category.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/UsageAnalysisView.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/UsageAnalysisView.tsx",
+          "frontend/src/App.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/ComparisonView.tsx",
+    "frontend/src/components/CostChart.tsx",
+    "frontend/src/components/EntryForm.tsx",
+    "frontend/src/components/EntryList.tsx",
+    "frontend/src/components/SummaryOverview.tsx",
+    "frontend/src/components/UsageAnalysisView.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

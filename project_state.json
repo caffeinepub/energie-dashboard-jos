@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Dutch energy meter tracking app where users can set a starting meter reading per year and enter monthly actual meter readings for gas and electricity. Currently fixing broken gas/electricity cost calculations and adding a usage analysis view (electricity high/low tariff and gas, split and totals).",
+  "architectural_notes": [],
+  "known_issues": [
+    "Gas and electricity cost calculations are broken and not computing correctly"
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-fix-gas-and-electricity-cost-calculations-so-that-monthly-costs-are-correctly-computed-from-meter-reading-deltas-multiplied-by-the-applicable-per-unit-price-gas-m-electricity-kwh-for-the-selected-year-ensure-summaryoverview-kpi-cards-gas-costs-electricity-costs-total-energy-costs-yearly-prognosis-all-display-correct-values",
+      "title": "Fix gas and electricity cost calculations so that monthly costs are correctly computed from meter reading deltas multiplied by the applicable per-unit price (gas €/m³, electricity €/kWh) for the selected year. Ensure SummaryOverview KPI cards (gas costs, electricity costs, total energy costs, yearly prognosis) all display correct values.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-usage-analysis-view-new-tab-or-section-that-shows-total-energy-consumption-broken-down-by-electricity-high-tariff-kwh-electricity-low-tariff-kwh-electricity-combined-total-kwh-and-gas-m-display-both-monthly-breakdowns-and-yearly-totals-for-each-category",
+      "title": "Add a usage analysis view (new tab or section) that shows total energy consumption broken down by: electricity high tariff (kWh), electricity low tariff (kWh), electricity combined total (kWh), and gas (m³). Display both monthly breakdowns and yearly totals for each category.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Fix broken gas and electricity cost calculations",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add usage analysis view showing total electricity (high and low tariff) and gas usage, split and totals",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Energieverbruik Tracker",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
